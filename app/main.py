@@ -15,3 +15,7 @@ app.add_middleware(
 )
 
 app.include_router(energy.router)
+
+@app.get("/")
+def read_root():
+    return {"Hello": "World"}
