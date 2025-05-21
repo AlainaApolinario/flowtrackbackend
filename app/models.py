@@ -1,13 +1,21 @@
-from sqlalchemy import Column, Integer, Float, DateTime
-from datetime import datetime
-from .database import Base
+# main.py
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 
-class EnergyData(Base):
-    __tablename__ = "energy_data"
+app = FastAPI()
 
-    id = Column(Integer, primary_key=True, index=True)
-    voltage = Column(Float)
-    current = Column(Float)
-    power = Column(Float)
-    kwh = Column(Float)
-    timestamp = Column(DateTime, default=datetime.utcnow)
+# Allow ESP32 to connect
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Or specify your frontend/domain
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.post("/data")
+async def receive_data(request: Request):
+    data = await request.json()
+    print("Received:", data)
+    # Optional: Save to DB or process it
+    return {"message": "Data received", "data": data}
